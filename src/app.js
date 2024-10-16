@@ -1,6 +1,6 @@
 import express from "express";
 import conectaNaDataBase from "./config/dbConnect.js";
-import livro from "./models/Livro.js";
+import routes from "./Routes/index.js";
 
 const conexao = await conectaNaDataBase();
 
@@ -14,37 +14,7 @@ conexao.once("open", ()=>{
 })
 
 const app = express();
-app.use(express.json()); 
-//middleware = é utilizado para ter acesso as requisições e respostas da API
-//e realizar ações como alteração ou passar informações adicionais
-//no caso acima qualquer requisição que seja parcialmente identifical como Json
-//vai ser tratado e convertido para Json
-
-
-app.get("/", (req, res) =>{
-    res.status(200).send("Curso de Node.js")
-});
-
-app.get("/livros", async (req, res) =>{
-    const listaLivros = await livro.find({}); //find método do moongose
-    res.status(200).json(listaLivros);
-});
-
-app.get("/livros/:id", (req, res) =>{
-    const index = buscaLivro(req.params.id);
-    res.status(200).json(livros[index])
-})
-
-app.post("/livros", (req, res) =>{
-    livros.push(req.body);
-    res.status(201).send("Livro cadastrado com sucesso")
-})
-
-app.put("/livros/:id", (req, res)=>{
-    const index = buscaLivro(req.params.id);
-    livros[index].titulo = req.body.titulo;
-    res.status(200).json(livros);
-})
+routes(app);
 
 app.delete("/livros/:id", (req, res)=>{
     const index = buscaLivro(req.params.id);
